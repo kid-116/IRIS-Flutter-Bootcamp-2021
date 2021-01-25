@@ -44,7 +44,6 @@ class _CalculatorState extends State<Calculator> {
       expression = equation;
       expression = expression.replaceAll("x", "*");
       expression = expression.replaceAll("÷", "/");
-      print(expression);
       try {
         Parser p = Parser();
         ContextModel cm = ContextModel();
