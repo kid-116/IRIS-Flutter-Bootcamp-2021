@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 class Calculator extends StatefulWidget {
   Calculator({Key key}) : super(key: key);
@@ -11,8 +12,91 @@ class _CalculatorState extends State<Calculator> {
   String equation = "0";
   String result = "0";
   String expression = "";
+  String activeOperand = "";
+  List<String> naturals = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  List<String> wholes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  List<String> operators = ["÷", "x", "-", "+"];
+  bool present(String element, List<String> list) {
+    for(int i = 0; i < list.length; ++ i) {
+      if(list[i] == element) {
+        return true;
+      }
+    }
+    return false;
+  }
   buttonPressed(String buttonText) {
     //YOU WILL HAVE TO IMPLEMENT THIS METHOD
+    if(buttonText == "AC") {
+      setState(() {
+        equation = "0";
+        result = "0";
+        expression = "";
+      });
+    }
+    else if(buttonText == "C") {
+      equation = equation.substring(0, equation.length - 1);
+      setState(() {
+        equation = equation == "" ? "0" : equation;
+      });
+    }
+    else if(buttonText == "=") {
+      //Calculate the equation
+      expression = equation;
+      expression = expression.replaceAll("x", "*");
+      expression = expression.replaceAll("÷", "/");
+      print(expression);
+      try {
+        Parser p = Parser();
+        ContextModel cm = ContextModel();
+        Expression exp = p.parse(expression);
+        result = "${exp.evaluate(EvaluationType.REAL, cm)}";
+      } catch(error) {
+
+      }
+      setState(() {});
+    }
+    else if(present(buttonText, operators)) {
+      if(present(equation[equation.length - 1], wholes) && equation != "0") {
+          equation = equation + buttonText;
+          setState(() {});
+        }
+    }
+    else if(buttonText == ".") {
+      setState(() {
+        if (present(equation[equation.length - 1], wholes)) {
+          int i;
+          for(i = equation.length - 1; i >= 0; -- i) {
+            if (present(equation[i], operators)) {
+              equation = equation + buttonText;
+              break;
+            }
+            else if (equation[i] == ".") {
+              break;
+            }
+          }
+          if(i < 0) {
+            equation += buttonText;
+          }
+        }
+      });
+    }
+    else if(present(buttonText, ["0", "00"])) {
+      if((equation != "0") && (!present(equation[equation.length - 1], operators))) {
+        setState(() {
+          equation = equation + buttonText;
+        });
+      }
+    }
+    else {
+      setState(() {
+        if(equation == "0") {
+          equation = buttonText;
+        }
+        else {
+          equation = equation + buttonText;
+        }
+      });
+    }
   }
 
   Widget buildButton(String buttonText, double buttonHeight, Color buttonColor,
