@@ -72,10 +72,10 @@ class _PortfolioHomePageState extends State<PortfolioHomePage>
         ),
       ),
       body: SingleChildScrollView(
-              child: Column(
+        child: Column(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height/2,
+              height: MediaQuery.of(context).size.height/1.7,
               child: TabBarView(
                 children: <Widget>[
                   AboutMePage(), 
